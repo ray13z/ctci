@@ -40,46 +40,31 @@ class Trie {
     
     public int searchSuffixes(String word) {
         TrieNode t = searchPrefix(word);
-        int count = 0;
         
         if(t == null)
-            return count;
+            return 0;
         
-        if(t.isLeaf) 
-            count++;
-        
-        count += getWords(t).size();
-        
-        return count;
-    }
-    
-    public List getWords(TrieNode t) {
-        List<TrieNode> list = new ArrayList<TrieNode>();
-        HashMap<Character, TrieNode> children = t.children;
-        
-        for(TrieNode node : children.values()) {
-            if(node.isLeaf)
-                list.add(node);
-            list.addAll(getWords(node));
-        }
-        
-        return list;
+        return t.noOfWords;
     }
     
     public void insert(String word) {
+        TrieNode t = root;
         HashMap<Character, TrieNode> children = root.children;
         
         for(int i=0; i<word.length(); i++) {
             char c = word.charAt(i);
+            
             if(!children.containsKey(c)) {
                 children.put(c, new TrieNode(c));
             }
+
+            t = children.get(c);
             
             if(i == word.length()-1) {
-                children.get(c).isLeaf = true;
+                t.isLeaf = true;
             }
-            
-            children = children.get(c).children;
+            t.noOfWords++;
+            children = t.children;
         }
     }
     
@@ -106,6 +91,7 @@ class Trie {
 class TrieNode {
     char c;
     boolean isLeaf;
+    int noOfWords;
     HashMap<Character, TrieNode> children = new HashMap<Character, TrieNode>();
     
     public TrieNode(char c) {
